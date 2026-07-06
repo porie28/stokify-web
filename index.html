@@ -784,6 +784,22 @@
 
             } catch (error) {
                 console.error("Firebase Auth Gagal, berpindah ke Demo Mode:", error);
+                
+                // Menganalisis alasan kegagalan untuk ditampilkan ke user
+                let friendlyMessage = "Gagal tersambung ke Firebase.";
+                if (error.code === 'auth/operation-not-allowed' || error.message?.includes('operation-not-allowed')) {
+                    friendlyMessage = "Koneksi Ditolak: Aktifkan 'Anonymous' Sign-in di Firebase Console > Authentication > Sign-in method!";
+                } else if (error.code === 'auth/invalid-api-key' || error.message?.includes('API key')) {
+                    friendlyMessage = "API Key Firebase tidak valid. Periksa konfigurasi JSON Anda.";
+                } else {
+                    friendlyMessage = `Firebase Error: ${error.message || error}`;
+                }
+                
+                // Tampilkan toast setelah DOM termuat sempurna
+                setTimeout(() => {
+                    showToast(friendlyMessage, "error");
+                }, 1000);
+
                 isDemoMode = true;
                 document.getElementById('demo-banner').classList.remove('hidden');
                 initLocalDemoData();

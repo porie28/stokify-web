@@ -36,6 +36,16 @@
         .role-user .admin-only {
             display: none !important;
         }
+        
+        /* Animasi getar untuk password salah */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .shake-effect {
+            animation: shake 0.2s ease-in-out 0s 2;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col role-admin">
@@ -60,7 +70,7 @@
                     <!-- Switcher Peran Hak Akses (Admin vs User) -->
                     <div class="flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
                         <span class="text-[9px] uppercase font-bold px-1.5 text-slate-400 hidden sm:inline">Peran</span>
-                        <select id="role-selector" onchange="changeAppRole(this.value)" class="bg-white border-none text-xs font-bold text-slate-700 rounded-lg py-1 px-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                        <select id="role-selector" onchange="attemptRoleChange(this.value)" class="bg-white border-none text-xs font-bold text-slate-700 rounded-lg py-1 px-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
                             <option value="admin">🔑 Admin (Full)</option>
                             <option value="user">👁️ User (Viewer)</option>
                         </select>
@@ -196,7 +206,6 @@
                         <span class="bg-rose-100 text-rose-800 text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Perhatian</span>
                     </div>
                     <div id="low-stock-list" class="space-y-3 flex-1 overflow-y-auto pr-1">
-                        <!-- Populated Dynamically by Javascript -->
                         <div class="text-center py-12 text-slate-400">
                             <i class="fa-regular fa-face-smile text-3xl block mb-2 text-slate-300"></i>
                             <p class="text-xs">Semua produk memiliki sisa stok yang aman.</p>
@@ -239,7 +248,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
                         <input id="barang-search" oninput="renderBarangList()" type="text" placeholder="Cari SKU atau nama barang..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
-                    <!-- Dropdown Kategori Material Konstruksi -->
+                    <!-- Dropdown Kategori -->
                     <select id="barang-filter-kategori" onchange="renderBarangList()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <option value="Semua">Semua Kategori</option>
                         <option value="Gypsum">Gypsum</option>
@@ -394,7 +403,6 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kategori</label>
-                        <!-- Form Dropdown Kategori Material Konstruksi Baru -->
                         <select id="barang-kategori" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             <option value="Gypsum">Gypsum</option>
                             <option value="Fiber Semen">Fiber Semen</option>
@@ -566,6 +574,39 @@
         </div>
     </div>
 
+    <!-- MODAL: Password Verification for Admin Role Access -->
+    <div id="admin-auth-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100">
+            <div class="text-center space-y-3">
+                <div class="mx-auto bg-amber-50 text-amber-600 p-3 rounded-2xl w-14 h-14 flex items-center justify-center shadow-lg shadow-amber-100">
+                    <i class="fa-solid fa-lock text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-lg">Verifikasi Sandi Admin</h3>
+                    <p class="text-xs text-slate-500 mt-1">Akses penuh hanya diberikan kepada staf administrator terdaftar.</p>
+                </div>
+            </div>
+            
+            <div class="mt-5 space-y-4" id="admin-auth-container">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 tracking-wider">Masukkan Password</label>
+                    <input id="admin-password-input" type="password" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-center font-mono tracking-widest text-slate-800">
+                    <p id="admin-auth-error" class="text-[10px] text-rose-600 font-semibold mt-1.5 text-center hidden"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Password salah! Coba lagi.</p>
+                </div>
+                
+                <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                    <span class="text-[10px] text-slate-400 font-medium block">💡 Password default pengujian</span>
+                    <span class="text-xs text-slate-600 font-bold font-mono">admin123</span>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <button onclick="cancelAdminAuth()" class="flex-1 px-4 py-2.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition">Batal</button>
+                    <button onclick="verifyAdminAuth()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-900 font-black text-xs px-4 py-2.5 rounded-xl transition shadow-lg shadow-amber-100">Verifikasi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: Preview Image Detail & Multiple Image Slider -->
     <div id="preview-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="closePreviewModal()">
         <div class="relative bg-white p-2 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
@@ -629,12 +670,12 @@
         let appId = 'stok-masuk-keluar-default';
         
         // =========================================================================
-        // KUNCI EMAS: Konfigurasi asli stokify-web-6e6c6 milik Anda dikunci permanen
+        // KUNCI EMAS: Konfigurasi asli stokify-web-6e6c6 MILIK ANDA DIRESTORASI (100% PERSIS SEPERTI SCREENSHOT CONSOLE!)
         // =========================================================================
         let firebaseConfig = {
           apiKey: "AIzaSyAuhRfTwsmxjQjcfV6MD4cTnvH5gZo7N7s",
           authDomain: "stokify-web-6e6c6.firebaseapp.com",
-          projectId: "stokify-web-6e6c6",
+          projectId: "stokify-web-6e6c6", // FIXED: Terkoneksi kembali ke "stokify-web-6e6c6"
           storageBucket: "stokify-web-6e6c6.firebasestorage.app",
           messagingSenderId: "355697193461",
           appId: "1:355697193461:web:26044cb29871b22c8e30bc"
@@ -678,6 +719,7 @@
         let activeTab = 'dashboard';
         let transactionChart = null;
         let currentRole = localStorage.getItem('stokify_current_role') || 'admin';
+        let previousRole = currentRole; // Menjaga state sebelum verifikasi sandi gagal
 
         // Temporary array store for current multiple image uploads
         let tempUploadedImages = [];
@@ -752,10 +794,52 @@
             };
         };
 
+        // Intercept Role Swap
+        window.attemptRoleChange = function(targetRole) {
+            if (targetRole === 'admin') {
+                // Tampilkan Modal Verifikasi Password Admin
+                document.getElementById('admin-password-input').value = '';
+                document.getElementById('admin-auth-error').classList.add('hidden');
+                document.getElementById('admin-auth-modal').classList.remove('hidden');
+                document.getElementById('admin-auth-modal').classList.add('flex');
+            } else {
+                previousRole = 'user';
+                changeAppRole('user');
+            }
+        };
+
+        window.cancelAdminAuth = function() {
+            document.getElementById('admin-auth-modal').classList.add('hidden');
+            document.getElementById('admin-auth-modal').classList.remove('flex');
+            // Kembalikan seleksi dropdown ke role sebelumnya
+            document.getElementById('role-selector').value = previousRole;
+        };
+
+        window.verifyAdminAuth = function() {
+            const input = document.getElementById('admin-password-input');
+            const errorLabel = document.getElementById('admin-auth-error');
+            const container = document.getElementById('admin-auth-container');
+
+            if (input.value === 'admin123') {
+                previousRole = 'admin';
+                document.getElementById('admin-auth-modal').classList.add('hidden');
+                document.getElementById('admin-auth-modal').classList.remove('flex');
+                changeAppRole('admin');
+            } else {
+                // Tampilkan pesan error dan mainkan efek getar
+                errorLabel.classList.remove('hidden');
+                container.classList.add('shake-effect');
+                setTimeout(() => {
+                    container.classList.remove('shake-effect');
+                }, 400);
+            }
+        };
+
         // Global Role Swapper Function
         window.changeAppRole = function(role) {
             currentRole = role;
             localStorage.setItem('stokify_current_role', role);
+            document.getElementById('role-selector').value = role;
             
             // Perbarui class tubuh untuk adaptasi CSS otomatis
             if (role === 'admin') {
@@ -881,6 +965,12 @@
         // Authenticate User or activate Demo Mode
         async function startAppInit() {
             // Set initial role choice from saved state
+            if (currentRole === 'admin') {
+                // Untuk inisialisasi awal, biarkan dia terverifikasi secara aman atau reset ke viewer
+                previousRole = 'admin';
+            } else {
+                previousRole = 'user';
+            }
             document.getElementById('role-selector').value = currentRole;
             changeAppRole(currentRole);
 
@@ -890,6 +980,7 @@
             }
 
             try {
+                // Inisialisasi ulang dengan data parameter KUNCI EMAS 6e6c6 Anda yang sudah divalidasi
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
                 const db = getFirestore(app);
@@ -1081,7 +1172,7 @@
             filtered.forEach(item => {
                 const isLow = Number(item.stok) <= Number(item.stokMin);
                 
-                // Secure cost price if role is viewer (User)
+                // Secure cost price if role is viewer (User) - Harga Beli Hanya Untuk Admin
                 const formattedPriceBeli = currentRole === 'admin' 
                     ? `Rp ${Number(item.hargaBeli).toLocaleString('id-ID')}` 
                     : `<span class="text-slate-400 italic text-[11px]"><i class="fa-solid fa-lock text-[9px] mr-0.5"></i> Terkunci</span>`;

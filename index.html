@@ -591,13 +591,14 @@
 
         // Global variables & fallbacks
         let appId = 'stok-masuk-keluar-default';
-        
-        // =========================================================================
-        // TIPS PENTING: Ganti nilai null di bawah ini dengan objek konfigurasi 
-        // Firebase Anda (dari Fase 3 Langkah 3.5) untuk koneksi otomatis permanen!
-        // =========================================================================
-        let firebaseConfig = null; 
-        
+        let firebaseConfig = {
+          apiKey: "AIzaSyAxXxXxX...",
+          authDomain: "stokify-web.firebaseapp.com",
+          projectId: "stokify-web",
+          storageBucket: "stokify-web.appspot.com",
+          messagingSenderId: "1234567890",
+          appId: "1:1234567890:web:abcdef123456"
+        };
         let isDemoMode = false;
 
         // Try load configuration from system or local storage

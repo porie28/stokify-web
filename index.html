@@ -31,9 +31,14 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Aturan dinamis untuk menyembunyikan elemen admin saat peran user aktif */
+        .role-user .admin-only {
+            display: none !important;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col role-admin">
 
     <!-- Top Navigation Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
@@ -50,9 +55,18 @@
                     </div>
                 </div>
 
-                <!-- Database Status & Settings Button -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <div class="hidden sm:flex flex-col text-right">
+                <!-- Database Status, Role Swapper & Settings Button -->
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Switcher Peran Hak Akses (Admin vs User) -->
+                    <div class="flex items-center bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                        <span class="text-[9px] uppercase font-bold px-1.5 text-slate-400 hidden sm:inline">Peran</span>
+                        <select id="role-selector" onchange="changeAppRole(this.value)" class="bg-white border-none text-xs font-bold text-slate-700 rounded-lg py-1 px-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer shadow-sm">
+                            <option value="admin">🔑 Admin (Full)</option>
+                            <option value="user">👁️ User (Viewer)</option>
+                        </select>
+                    </div>
+
+                    <div class="hidden md:flex flex-col text-right">
                         <span class="text-[10px] text-slate-400 font-bold uppercase">ID Pengguna</span>
                         <span id="user-id-display" class="text-xs font-mono font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded">Offline / Demo</span>
                     </div>
@@ -63,7 +77,7 @@
                             <span id="status-ping" class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                             <span id="status-dot" class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
                         </span>
-                        <span id="status-text">Koneksi Database</span>
+                        <span id="status-text" class="hidden sm:inline">Koneksi Database</span>
                     </button>
 
                     <!-- DB Settings Icon Button -->
@@ -191,13 +205,13 @@
                 </div>
             </div>
 
-            <!-- Quick Action Shortcuts -->
-            <div class="bg-slate-950 text-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            <!-- Quick Action Shortcuts (Hanya Untuk Admin) -->
+            <div class="admin-only bg-slate-950 text-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
                 <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-12 translate-y-12">
                     <i class="fa-solid fa-boxes-packing text-9xl"></i>
                 </div>
                 <div class="relative z-10 max-w-2xl">
-                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] uppercase font-black px-3 py-1 rounded-full tracking-wider">Pintasan Cepat</span>
+                    <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] uppercase font-black px-3 py-1 rounded-full tracking-wider">Pintasan Cepat Admin</span>
                     <h3 class="text-xl font-black mt-3 mb-1">Aksi Cepat Logistik</h3>
                     <p class="text-slate-400 text-sm mb-5">Lakukan pencatatan sirkulasi inventaris secara langsung atau buat master barang baru dengan satu kali klik.</p>
                     <div class="flex flex-wrap gap-3">
@@ -225,7 +239,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
                         <input id="barang-search" oninput="renderBarangList()" type="text" placeholder="Cari SKU atau nama barang..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
-                    <!-- Dropdown Kategori Material Konstruksi Baru -->
+                    <!-- Dropdown Kategori Material Konstruksi -->
                     <select id="barang-filter-kategori" onchange="renderBarangList()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <option value="Semua">Semua Kategori</option>
                         <option value="Gypsum">Gypsum</option>
@@ -235,8 +249,8 @@
                         <option value="Alat pertukangan">Alat pertukangan</option>
                     </select>
                 </div>
-                <!-- Action Button -->
-                <button onclick="openAddBarangModal()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-100">
+                <!-- Action Button (Hanya Untuk Admin) -->
+                <button onclick="openAddBarangModal()" class="admin-only w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-100">
                     <i class="fa-solid fa-circle-plus"></i> Tambah Barang Baru
                 </button>
             </div>
@@ -262,7 +276,7 @@
                         <option value="Keluar">Barang Keluar</option>
                     </select>
                 </div>
-                <div class="flex gap-2 w-full sm:w-auto">
+                <div class="admin-only flex gap-2 w-full sm:w-auto">
                     <button onclick="openTransactionModal('Masuk')" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-4 py-3 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-50">
                         <i class="fa-solid fa-circle-arrow-down"></i> Masuk
                     </button>
@@ -284,7 +298,7 @@
                                 <th class="px-6 py-4 text-right">Jumlah (Qty)</th>
                                 <th class="px-6 py-4">PIC / Petugas</th>
                                 <th class="px-6 py-4">Keterangan & Lampiran</th>
-                                <th class="px-6 py-4 text-center">Aksi</th>
+                                <th class="admin-only px-6 py-4 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="transaksi-table-body" class="divide-y divide-slate-100 text-sm">
@@ -363,7 +377,7 @@
         </div>
     </div>
 
-    <!-- MODAL: Kelola Barang (Add & Edit) -->
+    <!-- MODAL: Kelola Barang (Add & Edit) (Hanya Admin) -->
     <div id="barang-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-all duration-300">
         <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
             <div class="p-5 border-b border-slate-200 flex items-center justify-between">
@@ -418,17 +432,21 @@
                     </div>
                 </div>
 
-                <!-- Picture Upload Feature (Dengan Auto Compress) -->
+                <!-- Picture Upload Feature MULTIPLE (Dengan Auto Compress) -->
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Foto Barang</label>
-                    <div class="flex items-center space-x-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                        <div class="w-16 h-16 bg-slate-200 rounded-lg flex items-center justify-center text-slate-400 overflow-hidden shrink-0 border border-slate-300">
-                            <img id="barang-image-preview" src="" class="w-full h-full object-cover hidden">
-                            <i id="barang-image-placeholder" class="fa-solid fa-camera text-xl"></i>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Foto Barang (Maksimal 3 Foto)</label>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-center border-2 border-dashed border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-slate-100/50 p-4 rounded-xl transition cursor-pointer relative">
+                            <input type="file" id="barang-images" accept="image/*" multiple onchange="handleMultipleImagesUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                            <div class="text-center text-slate-400 space-y-1">
+                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-300"></i>
+                                <p class="text-xs font-semibold">Klik atau seret foto ke sini</p>
+                                <p class="text-[9px]">Maksimal 3 foto (Otomatis dikompres ringan)</p>
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <input type="file" id="barang-image" accept="image/*" onchange="previewAndCompressImage(event, 'barang-image-preview', 'barang-image-placeholder')" class="block w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer">
-                            <p class="text-[10px] text-slate-400 mt-1">Maksimal 350px (Kompresi otomatis aktif hemat database).</p>
+                        <!-- Pratinjau List Gambar Mini -->
+                        <div id="barang-images-preview-container" class="grid grid-cols-3 gap-3">
+                            <!-- Dynamic items -->
                         </div>
                     </div>
                 </div>
@@ -448,7 +466,7 @@
         </div>
     </div>
 
-    <!-- MODAL: Kelola Transaksi Baru (Masuk/Keluar) -->
+    <!-- MODAL: Kelola Transaksi Baru (Masuk/Keluar) (Hanya Admin) -->
     <div id="transaksi-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 transition-all duration-300">
         <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
             <div class="p-5 border-b border-slate-200 flex items-center justify-between">
@@ -548,16 +566,32 @@
         </div>
     </div>
 
-    <!-- MODAL: Preview Image Detail -->
-    <div id="preview-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="closePreviewModal()">
+    <!-- MODAL: Preview Image Detail & Multiple Image Slider -->
+    <div id="preview-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="closePreviewModal()">
         <div class="relative bg-white p-2 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col" onclick="event.stopPropagation()">
-            <button onclick="closePreviewModal()" class="absolute top-4 right-4 text-white bg-slate-900/60 hover:bg-slate-900/80 transition p-2 rounded-full flex items-center justify-center cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            <div class="bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center min-h-[300px]">
-                <img id="preview-modal-img" src="" class="max-w-full max-h-[70vh] object-contain">
+            <button onclick="closePreviewModal()" class="absolute top-4 right-4 text-white bg-slate-900/60 hover:bg-slate-900/80 transition p-2.5 rounded-full flex items-center justify-center cursor-pointer z-20"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <div class="bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center min-h-[300px] max-h-[50vh] relative group">
+                <!-- Main Zoom Image -->
+                <img id="preview-modal-img" src="" class="max-w-full max-h-[50vh] object-contain select-none">
+                
+                <!-- Arrow Navigation -->
+                <button onclick="navigateZoomImage(-1)" id="zoom-prev-btn" class="absolute left-3 top-1/2 -translate-y-1/2 bg-slate-900/60 text-white p-2.5 rounded-full hover:bg-emerald-600 transition hidden z-10">
+                    <i class="fa-solid fa-chevron-left text-sm"></i>
+                </button>
+                <button onclick="navigateZoomImage(1)" id="zoom-next-btn" class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-900/60 text-white p-2.5 rounded-full hover:bg-emerald-600 transition hidden z-10">
+                    <i class="fa-solid fa-chevron-right text-sm"></i>
+                </button>
             </div>
+            
             <div class="p-3">
                 <h4 id="preview-modal-title" class="font-bold text-slate-900 text-sm"></h4>
                 <p id="preview-modal-desc" class="text-xs text-slate-500 mt-1"></p>
+                
+                <!-- Thumbnail row in Zoom View -->
+                <div id="preview-modal-thumbnails" class="flex gap-2 justify-center mt-4 border-t border-slate-100 pt-3 hidden">
+                    <!-- Loaded dynamically -->
+                </div>
             </div>
         </div>
     </div>
@@ -567,12 +601,12 @@
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
             <div class="flex items-center space-x-3 text-red-600">
                 <div class="bg-red-50 p-2.5 rounded-xl"><i class="fa-solid fa-triangle-exclamation text-xl"></i></div>
-                <h3 id="confirm-title" class="font-bold text-slate-900 text-base">Konfirmasi Hapus</h3>
+                <h3 id="confirm-title" class="font-bold text-slate-900 text-base">Konfirmasi Tindakan</h3>
             </div>
-            <p id="confirm-message" class="text-sm text-slate-500 leading-relaxed">Apakah Anda yakin ingin melakukan proses ini? Data yang terhapus tidak dapat dikembalikan.</p>
+            <p id="confirm-message" class="text-sm text-slate-500 leading-relaxed"></p>
             <div class="flex items-center justify-end gap-3 pt-2">
                 <button id="confirm-btn-cancel" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">Batal</button>
-                <button id="confirm-btn-yes" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-4 py-2 rounded-xl transition">Ya, Hapus</button>
+                <button id="confirm-btn-yes" class="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-4 py-2 rounded-xl transition">Konfirmasi</button>
             </div>
         </div>
     </div>
@@ -598,13 +632,13 @@
         // KUNCI EMAS: Konfigurasi asli stokify-web-6e6c6 milik Anda dikunci permanen
         // =========================================================================
         let firebaseConfig = {
-  apiKey: "AIzaSyAuhRfTWsmxjQjcfV6MD4cTnvH5gZo7N7s",
-  authDomain: "stokify-web-6e6c6.firebaseapp.com",
-  projectId: "stokify-web-6e6c6",
-  storageBucket: "stokify-web-6e6c6.firebasestorage.app",
-  messagingSenderId: "355697193461",
-  appId: "1:355697193461:web:26044cb29871b22c8e30bc"
-};
+          apiKey: "AIzaSyAuhRfTwsmxjQjcfV6MD4cTnvH5gZo7N7s",
+          authDomain: "stokify-web-6e6c6.firebaseapp.com",
+          projectId: "stokify-web-6e6c6",
+          storageBucket: "stokify-web-6e6c6.firebasestorage.app",
+          messagingSenderId: "355697193461",
+          appId: "1:355697193461:web:26044cb29871b22c8e30bc"
+        }; 
         
         let isDemoMode = false;
 
@@ -643,13 +677,21 @@
         let transaksiList = [];
         let activeTab = 'dashboard';
         let transactionChart = null;
+        let currentRole = localStorage.getItem('stokify_current_role') || 'admin';
+
+        // Temporary array store for current multiple image uploads
+        let tempUploadedImages = [];
+        
+        // Active Zoom Gallery state
+        let activeZoomList = [];
+        let activeZoomIndex = 0;
 
         // Initial Demo Mock Data (Pre-populated if empty in Local Storage)
         const initialMockBarang = [
-            { id: "demo-b1", sku: "SKU-GYP01", nama: "Gypsum Jayaboard 9mm", kategori: "Gypsum", stok: 45, stokMin: 10, hargaBeli: 65000, hargaJual: 78000, deskripsi: "Rak A1 - Utama" },
-            { id: "demo-b2", sku: "SKU-FIB01", nama: "Kalsiboard 6mm 1.2x2.4m", kategori: "Fiber Semen", stok: 30, stokMin: 8, hargaBeli: 58000, hargaJual: 70000, deskripsi: "Rak A3 - Belakang" },
-            { id: "demo-b3", sku: "SKU-RNG01", nama: "Baja Ringan Kanal C75 T0.75", kategori: "Rangka dan Accessoris", stok: 120, stokMin: 30, hargaBeli: 72000, hargaJual: 85000, deskripsi: "Area B2 - Besi" },
-            { id: "demo-b4", sku: "SKU-SAN01", nama: "Kran Angsa Stainless Sanitari", kategori: "Sanitari dan Accessoris", stok: 4, stokMin: 10, hargaBeli: 110000, hargaJual: 145000, deskripsi: "Etalase Depan" }
+            { id: "demo-b1", sku: "SKU-GYP01", nama: "Gypsum Jayaboard 9mm", kategori: "Gypsum", stok: 45, stokMin: 10, hargaBeli: 65000, hargaJual: 78000, deskripsi: "Rak A1 - Utama", foto: "", fotos: [] },
+            { id: "demo-b2", sku: "SKU-FIB01", nama: "Kalsiboard 6mm 1.2x2.4m", kategori: "Fiber Semen", stok: 30, stokMin: 8, hargaBeli: 58000, hargaJual: 70000, deskripsi: "Rak A3 - Belakang", foto: "", fotos: [] },
+            { id: "demo-b3", sku: "SKU-RNG01", nama: "Baja Ringan Kanal C75 T0.75", kategori: "Rangka dan Accessoris", stok: 120, stokMin: 30, hargaBeli: 72000, hargaJual: 85000, deskripsi: "Area B2 - Besi", foto: "", fotos: [] },
+            { id: "demo-b4", sku: "SKU-SAN01", nama: "Kran Angsa Stainless Sanitari", kategori: "Sanitari dan Accessoris", stok: 4, stokMin: 10, hargaBeli: 110000, hargaJual: 145000, deskripsi: "Etalase Depan", foto: "", fotos: [] }
         ];
 
         const initialMockTransaksi = [
@@ -710,17 +752,36 @@
             };
         };
 
-        // Compress Image Helper to convert to Lightweight Base64 for Storage
-        window.previewAndCompressImage = function(event, previewId, placeholderId) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // Global Role Swapper Function
+        window.changeAppRole = function(role) {
+            currentRole = role;
+            localStorage.setItem('stokify_current_role', role);
+            
+            // Perbarui class tubuh untuk adaptasi CSS otomatis
+            if (role === 'admin') {
+                document.body.classList.remove('role-user');
+                document.body.classList.add('role-admin');
+            } else {
+                document.body.classList.remove('role-admin');
+                document.body.classList.add('role-user');
+            }
 
+            // Redraw content based on new permissions
+            renderBarangList();
+            renderTransaksiList();
+            applyReportFilters();
+            updateDashboardStats();
+            
+            showToast(`Akses berhasil diubah ke: ${role === 'admin' ? 'Administrator' : 'Staf (Viewer)'}`, 'info');
+        };
+
+        // Core Image Auto Compressor Utility
+        function compressSingleImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    // Resize to max 350x350 to optimize database performance
                     const MAX_WIDTH = 350;
                     const MAX_HEIGHT = 350;
                     let width = img.width;
@@ -743,26 +804,86 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Low quality JPEG (0.6) for super tiny size (<30KB)
+                    // Low quality JPEG (0.6) for tiny size (<20KB)
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    
-                    // Update DOM preview
-                    const previewImg = document.getElementById(previewId);
-                    const placeholder = document.getElementById(placeholderId);
-                    previewImg.src = compressedBase64;
-                    previewImg.classList.remove('hidden');
-                    if (placeholder) placeholder.classList.add('hidden');
-
-                    // Attach compressed data directly to input dataset
-                    event.target.dataset.compressed = compressedBase64;
+                    callback(compressedBase64);
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        // Compress Single Document Image Helper
+        window.previewAndCompressImage = function(event, previewId, placeholderId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            compressSingleImage(file, (base64Data) => {
+                const previewImg = document.getElementById(previewId);
+                const placeholder = document.getElementById(placeholderId);
+                previewImg.src = base64Data;
+                previewImg.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+
+                // Attach compressed data directly to input dataset
+                event.target.dataset.compressed = base64Data;
+            });
+        };
+
+        // Handle Multiple Images selection inside Master Barang Modal
+        window.handleMultipleImagesUpload = function(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            // Total maximum check
+            if (tempUploadedImages.length + files.length > 3) {
+                showToast("Maksimal hanya diperbolehkan mengunggah 3 foto.", "error");
+                return;
+            }
+
+            let loadedCount = 0;
+            files.forEach(file => {
+                compressSingleImage(file, (base64) => {
+                    tempUploadedImages.push(base64);
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        renderFormImagePreviews();
+                    }
+                });
+            });
+        };
+
+        // Render mini previews in item modal
+        function renderFormImagePreviews() {
+            const container = document.getElementById('barang-images-preview-container');
+            container.innerHTML = '';
+
+            tempUploadedImages.forEach((imgBase64, index) => {
+                const element = document.createElement('div');
+                element.className = 'relative w-full h-20 rounded-lg overflow-hidden border border-slate-200 group shadow-xs';
+                element.innerHTML = `
+                    <img src="${imgBase64}" class="w-full h-full object-cover">
+                    <button type="button" onclick="removeFormImage(${index})" class="absolute inset-0 bg-rose-600/80 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs cursor-pointer">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Hapus
+                    </button>
+                    <span class="absolute bottom-1 right-1 bg-slate-900/60 text-white text-[8px] px-1 rounded">${index === 0 ? 'Utama' : index + 1}</span>
+                `;
+                container.appendChild(element);
+            });
+        }
+
+        // Remove single image from temporary upload container
+        window.removeFormImage = function(index) {
+            tempUploadedImages.splice(index, 1);
+            renderFormImagePreviews();
         };
 
         // Authenticate User or activate Demo Mode
         async function startAppInit() {
+            // Set initial role choice from saved state
+            document.getElementById('role-selector').value = currentRole;
+            changeAppRole(currentRole);
+
             if (isDemoMode) {
                 initLocalDemoData();
                 return;
@@ -800,17 +921,15 @@
             } catch (error) {
                 console.error("Firebase Auth Gagal, berpindah ke Demo Mode:", error);
                 
-                // Menganalisis alasan kegagalan untuk ditampilkan ke user
                 let friendlyMessage = "Gagal tersambung ke Firebase.";
                 if (error.code === 'auth/operation-not-allowed' || error.message?.includes('operation-not-allowed')) {
-                    friendlyMessage = "Koneksi Ditolak: Aktifkan 'Anonymous' Sign-in di Firebase Console > Authentication > Sign-in method!";
+                    friendlyMessage = "Koneksi Ditolak: Aktifkan 'Anonymous' Sign-in di Firebase Console > Authentication!";
                 } else if (error.code === 'auth/invalid-api-key' || error.message?.includes('API key')) {
                     friendlyMessage = "API Key Firebase tidak valid. Periksa konfigurasi JSON Anda.";
                 } else {
                     friendlyMessage = `Firebase Error: ${error.message || error}`;
                 }
                 
-                // Tampilkan toast setelah DOM termuat sempurna
                 setTimeout(() => {
                     showToast(friendlyMessage, "error");
                 }, 1000);
@@ -926,7 +1045,15 @@
             }
         };
 
-        // Render Master Barang Grid (with Search & Category Filters)
+        // Hover swaps thumbnail on Card image element
+        window.swapCardMainImg = function(itemId, src) {
+            const cardImg = document.getElementById(`card-main-img-${itemId}`);
+            if (cardImg) {
+                cardImg.src = src;
+            }
+        };
+
+        // Render Master Barang Grid (with Search, Category, and Role constraints)
         window.renderBarangList = function() {
             const grid = document.getElementById('barang-grid');
             const searchVal = document.getElementById('barang-search').value.toLowerCase();
@@ -953,20 +1080,41 @@
 
             filtered.forEach(item => {
                 const isLow = Number(item.stok) <= Number(item.stokMin);
-                const formattedPriceBeli = Number(item.hargaBeli).toLocaleString('id-ID');
-                const formattedPriceJual = Number(item.hargaJual).toLocaleString('id-ID');
+                
+                // Secure cost price if role is viewer (User)
+                const formattedPriceBeli = currentRole === 'admin' 
+                    ? `Rp ${Number(item.hargaBeli).toLocaleString('id-ID')}` 
+                    : `<span class="text-slate-400 italic text-[11px]"><i class="fa-solid fa-lock text-[9px] mr-0.5"></i> Terkunci</span>`;
+                    
+                const formattedPriceJual = `Rp ${Number(item.hargaJual).toLocaleString('id-ID')}`;
 
-                const imageHtml = item.foto 
-                    ? `<img src="${item.foto}" class="w-full h-full object-cover">` 
+                const imagesArray = item.fotos && item.fotos.length > 0 ? item.fotos : (item.foto ? [item.foto] : []);
+                const mainImage = imagesArray[0] || '';
+
+                const imageHtml = mainImage 
+                    ? `<img id="card-main-img-${item.id}" src="${mainImage}" class="w-full h-full object-cover transition-all duration-300 transform group-hover:scale-105">` 
                     : `<div class="bg-slate-100 w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-boxes-stacked text-3xl"></i></div>`;
 
+                // Render tiny thumbnails overlay inside image container if multiple images exist
+                let thumbnailSliderHtml = '';
+                if (imagesArray.length > 1) {
+                    thumbnailSliderHtml = `
+                        <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-1.5 bg-slate-900/60 p-1.5 rounded-lg backdrop-blur-xs max-w-[90%] overflow-x-auto z-10 border border-white/10 shadow-sm">
+                            ${imagesArray.map((src, idx) => `
+                                <img src="${src}" onmouseover="swapCardMainImg('${item.id}', '${src}')" onclick="event.stopPropagation(); openZoomGallery('${item.id}', ${idx})" class="w-6 h-6 rounded object-cover border border-white/50 hover:border-emerald-400 transition cursor-pointer select-none">
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
                 const cardHtml = `
-                    <div class="bg-white rounded-2xl border ${isLow ? 'border-amber-300 bg-amber-50/10' : 'border-slate-200'} shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col">
-                        <!-- Foto Preview -->
-                        <div class="h-40 w-full relative shrink-0 border-b border-slate-100 cursor-pointer overflow-hidden group" onclick="openPreviewModal('${item.foto}', '${item.nama}', 'Kategori: ${item.kategori} | SKU: ${item.sku}')">
+                    <div class="bg-white rounded-2xl border ${isLow ? 'border-amber-300 bg-amber-50/10' : 'border-slate-200'} shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col group">
+                        <!-- Image Container with thumbnails preview slider -->
+                        <div class="h-40 w-full relative shrink-0 border-b border-slate-100 cursor-pointer overflow-hidden" onclick="openZoomGallery('${item.id}', 0)">
                             ${imageHtml}
-                            <span class="absolute top-3 left-3 bg-slate-950/80 text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow">${item.sku}</span>
-                            ${isLow ? '<span class="absolute top-3 right-3 bg-amber-500 text-slate-900 text-[9px] font-bold px-2 py-1 rounded-lg animate-pulse shadow-sm"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock</span>' : ''}
+                            <span class="absolute top-3 left-3 bg-slate-950/80 text-white text-[10px] font-mono font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow z-10">${item.sku}</span>
+                            ${isLow ? '<span class="absolute top-3 right-3 bg-amber-500 text-slate-900 text-[9px] font-bold px-2 py-1 rounded-lg animate-pulse shadow-sm z-10"><i class="fa-solid fa-triangle-exclamation"></i> Low Stock</span>' : ''}
+                            ${thumbnailSliderHtml}
                         </div>
                         
                         <!-- Deskripsi -->
@@ -984,17 +1132,17 @@
                                 </div>
                                 <div class="text-right">
                                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Beli / Jual</span>
-                                    <span class="text-xs block font-bold text-slate-600">Rp ${formattedPriceBeli}</span>
-                                    <span class="text-xs block font-extrabold text-emerald-600">Rp ${formattedPriceJual}</span>
+                                    <span class="text-xs block font-bold text-slate-600">${formattedPriceBeli}</span>
+                                    <span class="text-xs block font-extrabold text-emerald-600">${formattedPriceJual}</span>
                                 </div>
                             </div>
 
-                            <!-- Navigasi Aksi -->
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
-                                <button onclick="openEditBarangModal('${item.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+                            <!-- Navigasi Aksi (Hanya Muncul Untuk Admin) -->
+                            <div class="admin-only mt-4 pt-3 border-t border-slate-100 flex gap-2">
+                                <button onclick="openEditBarangModal('${item.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer">
                                     <i class="fa-solid fa-pen-to-square"></i> Ubah
                                 </button>
-                                <button onclick="deleteBarang('${item.id}', '${item.nama}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition flex items-center justify-center">
+                                <button onclick="deleteBarang('${item.id}', '${item.nama}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-2 rounded-xl transition flex items-center justify-center cursor-pointer">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </button>
                             </div>
@@ -1055,7 +1203,7 @@
                     : `<span class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-700 text-xs font-bold px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle-up text-[10px]"></i> Keluar</span>`;
 
                 const lampiranBtn = t.foto
-                    ? `<button onclick="openPreviewModal('${t.foto}', 'Bukti Transaksi', 'Dokumen No: ${t.noDokumen || 'N/A'} | PIC: ${t.pic}')" class="text-emerald-600 hover:text-emerald-800 font-bold flex items-center gap-1 mt-1 transition cursor-pointer"><i class="fa-solid fa-file-image"></i> Lihat Bukti Fisik</button>`
+                    ? `<button onclick="openZoomGallery('', 0, ['${t.foto}'], 'Bukti Transaksi', 'Dokumen No: ${t.noDokumen || 'N/A'} | PIC: ${t.pic}')" class="text-emerald-600 hover:text-emerald-800 font-bold flex items-center gap-1 mt-1 transition cursor-pointer"><i class="fa-solid fa-file-image"></i> Lihat Bukti Fisik</button>`
                     : '<span class="text-[11px] text-slate-400 block mt-1"><i class="fa-regular fa-image"></i> Tanpa Bukti Fisik</span>';
 
                 const rowHtml = `
@@ -1080,8 +1228,8 @@
                             <div class="text-xs text-slate-400 mt-0.5">${t.keterangan || 'Tidak ada catatan'}</div>
                             ${lampiranBtn}
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            <button onclick="deleteTransaksi('${t.id}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition" title="Batalkan/Hapus Transaksi">
+                        <td class="admin-only px-6 py-4 text-center">
+                            <button onclick="deleteTransaksi('${t.id}')" class="text-slate-400 hover:text-rose-600 p-2 rounded-lg hover:bg-rose-50 transition cursor-pointer" title="Batalkan/Hapus Transaksi">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -1266,10 +1414,9 @@
             document.getElementById('barang-modal-id').value = "";
             document.getElementById('barang-sku').disabled = false;
             
-            // Clean previews
-            document.getElementById('barang-image-preview').src = "";
-            document.getElementById('barang-image-preview').classList.add('hidden');
-            document.getElementById('barang-image-placeholder').classList.remove('hidden');
+            // Clean uploaded gallery files
+            tempUploadedImages = [];
+            renderFormImagePreviews();
 
             document.getElementById('barang-modal').classList.remove('hidden');
             document.getElementById('barang-modal').classList.add('flex');
@@ -1292,18 +1439,9 @@
             document.getElementById('barang-harga-jual').value = item.hargaJual || 0;
             document.getElementById('barang-deskripsi').value = item.deskripsi || '';
 
-            // Foto preview
-            const imgPreview = document.getElementById('barang-image-preview');
-            const placeholder = document.getElementById('barang-image-placeholder');
-            if (item.foto) {
-                imgPreview.src = item.foto;
-                imgPreview.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-            } else {
-                imgPreview.src = "";
-                imgPreview.classList.add('hidden');
-                placeholder.classList.remove('hidden');
-            }
+            // Set images gallery array list
+            tempUploadedImages = item.fotos && item.fotos.length > 0 ? [...item.fotos] : (item.foto ? [item.foto] : []);
+            renderFormImagePreviews();
 
             document.getElementById('barang-modal').classList.remove('hidden');
             document.getElementById('barang-modal').classList.add('flex');
@@ -1322,9 +1460,9 @@
             
             const submitBtn = document.getElementById('transaksi-submit-btn');
             if (type === 'Masuk') {
-                submitBtn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-50";
+                submitBtn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-emerald-50 cursor-pointer";
             } else {
-                submitBtn.className = "bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-rose-50";
+                submitBtn.className = "bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-rose-50 cursor-pointer";
             }
 
             // Reset File preview
@@ -1341,15 +1479,91 @@
             document.getElementById('transaksi-modal').classList.remove('flex');
         };
 
-        // Document Preview
-        window.openPreviewModal = function(src, title, description) {
-            if (!src) return;
-            document.getElementById('preview-modal-img').src = src;
+        // Document & Multiple Images Zoom Preview Modal Setup
+        window.openZoomGallery = function(itemId, index = 0, fallbackImagesList = null, fallbackTitle = '', fallbackDesc = '') {
+            let srcList = [];
+            let title = '';
+            let desc = '';
+
+            if (fallbackImagesList) {
+                srcList = fallbackImagesList;
+                title = fallbackTitle;
+                desc = fallbackDesc;
+            } else {
+                const item = barangList.find(b => b.id === itemId);
+                if (!item) return;
+
+                srcList = item.fotos && item.fotos.length > 0 ? item.fotos : (item.foto ? [item.foto] : []);
+                title = item.nama;
+                desc = `Kategori: ${item.kategori} | SKU: ${item.sku}`;
+            }
+
+            if (srcList.length === 0) {
+                showToast("Barang tidak memiliki dokumentasi foto.", "info");
+                return;
+            }
+
+            // Set global active zoom list variables
+            activeZoomList = srcList;
+            activeZoomIndex = index;
+
+            // Render DOM Zoom layout
             document.getElementById('preview-modal-title').innerText = title;
-            document.getElementById('preview-modal-desc').innerText = description;
+            document.getElementById('preview-modal-desc').innerText = desc;
             
+            renderZoomActiveIndex();
+
             document.getElementById('preview-modal').classList.remove('hidden');
             document.getElementById('preview-modal').classList.add('flex');
+        };
+
+        // Render current active zoom index of the gallery slider
+        function renderZoomActiveIndex() {
+            const imgContainer = document.getElementById('preview-modal-img');
+            imgContainer.src = activeZoomList[activeZoomIndex];
+
+            // Setup arrow buttons visibility
+            const prevBtn = document.getElementById('zoom-prev-btn');
+            const nextBtn = document.getElementById('zoom-next-btn');
+            if (activeZoomList.length > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+
+            // Render mini thumbnails inside the zoom dialog
+            const thumbContainer = document.getElementById('preview-modal-thumbnails');
+            if (activeZoomList.length > 1) {
+                thumbContainer.classList.remove('hidden');
+                thumbContainer.innerHTML = '';
+                
+                activeZoomList.forEach((src, idx) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = src;
+                    thumb.className = `w-11 h-11 object-cover rounded-lg border-2 cursor-pointer transition select-none ${idx === activeZoomIndex ? 'border-emerald-500 scale-105 shadow-sm' : 'border-transparent opacity-60 hover:opacity-100'}`;
+                    thumb.onclick = (e) => {
+                        e.stopPropagation();
+                        activeZoomIndex = idx;
+                        renderZoomActiveIndex();
+                    };
+                    thumbContainer.appendChild(thumb);
+                });
+            } else {
+                thumbContainer.classList.add('hidden');
+            }
+        }
+
+        // Navigate zooming gallery using buttons (Arrow helper)
+        window.navigateZoomImage = function(direction) {
+            activeZoomIndex += direction;
+            if (activeZoomIndex < 0) {
+                activeZoomIndex = activeZoomList.length - 1;
+            } else if (activeZoomIndex >= activeZoomList.length) {
+                activeZoomIndex = 0;
+            }
+            renderZoomActiveIndex();
         };
 
         window.closePreviewModal = function() {
@@ -1370,9 +1584,6 @@
             const hargaBeliVal = Number(document.getElementById('barang-harga-beli').value);
             const hargaJualVal = Number(document.getElementById('barang-harga-jual').value);
             const deskripsiVal = document.getElementById('barang-deskripsi').value.trim();
-            
-            const fileInput = document.getElementById('barang-image');
-            const compressedPhoto = fileInput.dataset.compressed || null;
 
             // SKU validation for new entries
             if (!modalId) {
@@ -1392,18 +1603,11 @@
                 hargaBeli: hargaBeliVal,
                 hargaJual: hargaJualVal,
                 deskripsi: deskripsiVal,
+                // Primary foto falls back to the first item of the array
+                foto: tempUploadedImages[0] || '',
+                fotos: tempUploadedImages,
                 updatedAt: Date.now()
             };
-
-            if (compressedPhoto) {
-                payload.foto = compressedPhoto;
-            } else if (modalId) {
-                // Keep existing photo during edit if no new upload
-                const previousItem = barangList.find(b => b.id === modalId);
-                if (previousItem && previousItem.foto) {
-                    payload.foto = previousItem.foto;
-                }
-            }
 
             // Logic separation depending on connection type
             if (isDemoMode) {

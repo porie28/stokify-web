@@ -229,9 +229,9 @@
                         <option value="Semua">Semua Kategori</option>
                         <option value="Gypsum">Gypsum</option>
                         <option value="Fiber Semen">Fiber Semen</option>
-                        <option value="Sanitari">Sanitari & Accs</option>
-                        <option value="Pertukangan">Alat Pertukangan</option>
-                        <option value="Lainnya">Lain-lain</option>
+                        <option value="Rangka dan Accessoris">Rangka dan Accessoris</option>
+                        <option value="Sanitari dan Accessoris">Sanitari dan Accessoris</option>
+                        <option value="Alat pertukangan">Alat pertukangan</option>
                     </select>
                 </div>
                 <!-- Action Button -->
@@ -380,11 +380,11 @@
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kategori</label>
                         <select id="barang-kategori" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="Elektronik">Elektronik</option>
-                            <option value="Pakaian">Pakaian / Tekstil</option>
-                            <option value="Makanan">Makanan & Minuman</option>
-                            <option value="Alat Kantor">Alat Tulis Kantor</option>
-                            <option value="Lainnya">Lain-lain</option>
+                            <option value="Gypsum">Gypsum</option>
+                            <option value="Fiber Semen">Fiber Semen</option>
+                            <option value="Rangka dan Accessoris">Rangka dan Accessoris</option>
+                            <option value="Sanitari dan Accessoris">Sanitari dan Accessoris</option>
+                            <option value="Alat pertukangan">Alat pertukangan</option>
                         </select>
                     </div>
                 </div>
@@ -591,15 +591,20 @@
 
         // Global variables & fallbacks
         let appId = 'stok-masuk-keluar-default';
-        const firebaseConfig = {
-  apiKey: "AIzaSyAuhRfTWsmxjQjcfV6MD4cTnvH5gZo7N7s",
-  authDomain: "stokify-web-6e6c6.firebaseapp.com",
-  projectId: "stokify-web-6e6c6",
-  storageBucket: "stokify-web-6e6c6.firebasestorage.app",
-  messagingSenderId: "355697193461",
-  appId: "1:355697193461:web:26044cb29871b22c8e30bc"
-};
-
+        
+        // =========================================================================
+        // TIPS PENTING: Ganti nilai null di bawah ini dengan objek konfigurasi 
+        // Firebase Anda (dari Fase 3 Langkah 3.5) untuk koneksi otomatis permanen!
+        // =========================================================================
+        let firebaseConfig = {
+          apiKey: "AIzaSyAuhRfTwsmxjQjcfV6MD4cTnvH5gZo7N7s",
+          authDomain: "stokify-web-6e6c6.firebaseapp.com",
+          projectId: "stokify-web-6e6c6",
+          storageBucket: "stokify-web-6e6c6.firebasestorage.app",
+          messagingSenderId: "355697193461",
+          appId: "1:355697193461:web:26044cb29871b22c8e30bc"
+        }; 
+        
         let isDemoMode = false;
 
         // Try load configuration from system or local storage
@@ -640,17 +645,16 @@
 
         // Initial Demo Mock Data (Pre-populated if empty in Local Storage)
         const initialMockBarang = [
-            { id: "demo-b1", sku: "SKU-ELE01", nama: "Laptop ASUS VivoBook 14", kategori: "Elektronik", stok: 12, stokMin: 5, hargaBeli: 7500000, hargaJual: 8800000, deskripsi: "Gudang Utama - Rak A1" },
-            { id: "demo-b2", sku: "SKU-ELE02", nama: "Printer Canon PIXMA", kategori: "Elektronik", stok: 3, stokMin: 6, hargaBeli: 850000, hargaJual: 1100000, deskripsi: "Gudang Utama - Rak A3" },
-            { id: "demo-b3", sku: "SKU-ATK01", nama: "Kertas HVS A4 Sinar Dunia", kategori: "Alat Kantor", stok: 85, stokMin: 20, hargaBeli: 42000, hargaJual: 55000, deskripsi: "Gudang ATK - Rak B1" },
-            { id: "demo-b4", sku: "SKU-PAK01", nama: "Seragam Kemeja Kerja Navy", kategori: "Pakaian", stok: 4, stokMin: 10, hargaBeli: 110000, hargaJual: 150000, deskripsi: "Gudang Logistik" }
+            { id: "demo-b1", sku: "SKU-GYP01", nama: "Gypsum Jayaboard 9mm", kategori: "Gypsum", stok: 45, stokMin: 10, hargaBeli: 65000, hargaJual: 78000, deskripsi: "Rak A1 - Utama" },
+            { id: "demo-b2", sku: "SKU-FIB01", nama: "Kalsiboard 6mm 1.2x2.4m", kategori: "Fiber Semen", stok: 30, stokMin: 8, hargaBeli: 58000, hargaJual: 70000, deskripsi: "Rak A3 - Belakang" },
+            { id: "demo-b3", sku: "SKU-RNG01", nama: "Baja Ringan Kanal C75 T0.75", kategori: "Rangka dan Accessoris", stok: 120, stokMin: 30, hargaBeli: 72000, hargaJual: 85000, deskripsi: "Area B2 - Besi" },
+            { id: "demo-b4", sku: "SKU-SAN01", nama: "Kran Angsa Stainless Sanitari", kategori: "Sanitari dan Accessoris", stok: 4, stokMin: 10, hargaBeli: 110000, hargaJual: 145000, deskripsi: "Etalase Depan" }
         ];
 
         const initialMockTransaksi = [
-            { id: "demo-t1", barangId: "demo-b1", tipe: "Masuk", qty: 10, pic: "Budi Santoso", noDokumen: "SJ-ASUS-998A", keterangan: "Restok rutin dari distributor resmi", timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000 },
-            { id: "demo-t2", barangId: "demo-b2", tipe: "Keluar", qty: 2, pic: "Siti Rahma", noDokumen: "INV-LOG-0402", keterangan: "Dipakai divisi pemasaran", timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000 },
-            { id: "demo-t3", barangId: "demo-b3", tipe: "Masuk", qty: 50, pic: "Budi Santoso", noDokumen: "SJ-SINAR-12", keterangan: "Stok kertas bulanan", timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000 },
-            { id: "demo-t4", barangId: "demo-b4", tipe: "Keluar", qty: 6, pic: "Siti Rahma", noDokumen: "OUT-001", keterangan: "Pembagian karyawan baru", timestamp: Date.now() }
+            { id: "demo-t1", barangId: "demo-b1", tipe: "Masuk", qty: 45, pic: "Ferry", noDokumen: "SJ-GYP-112", keterangan: "Stok awal masuk", timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000 },
+            { id: "demo-t2", barangId: "demo-b4", tipe: "Keluar", qty: 2, pic: "Budi", noDokumen: "INV-SAN-01", keterangan: "Pembelian langsung", timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000 },
+            { id: "demo-t3", barangId: "demo-b3", tipe: "Masuk", qty: 50, pic: "Ferry", noDokumen: "SJ-RNG-04", keterangan: "Restok dari distributor", timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000 }
         ];
 
         // Toast Helper Function

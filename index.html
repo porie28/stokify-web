@@ -591,7 +591,13 @@
 
         // Global variables & fallbacks
         let appId = 'stok-masuk-keluar-default';
-        let firebaseConfig = null;
+        
+        // =========================================================================
+        // TIPS PENTING: Ganti nilai null di bawah ini dengan objek konfigurasi 
+        // Firebase Anda (dari Fase 3 Langkah 3.5) untuk koneksi otomatis permanen!
+        // =========================================================================
+        let firebaseConfig = null; 
+        
         let isDemoMode = false;
 
         // Try load configuration from system or local storage
@@ -603,15 +609,17 @@
                 console.error("Gagal parse __firebase_config default:", e);
             }
         } else {
-            // Check custom config in LocalStorage
-            const storedConfig = localStorage.getItem('stokify_custom_firebase_config');
-            const storedAppId = localStorage.getItem('stokify_custom_app_id');
-            if (storedConfig) {
-                try {
-                    firebaseConfig = JSON.parse(storedConfig);
-                    appId = storedAppId || 'stok-masuk-keluar-default';
-                } catch(e) {
-                    console.error("Gagal parse custom Firebase config:", e);
+            // Check custom config in LocalStorage if not hardcoded
+            if (!firebaseConfig) {
+                const storedConfig = localStorage.getItem('stokify_custom_firebase_config');
+                const storedAppId = localStorage.getItem('stokify_custom_app_id');
+                if (storedConfig) {
+                    try {
+                        firebaseConfig = JSON.parse(storedConfig);
+                        appId = storedAppId || 'stok-masuk-keluar-default';
+                    } catch(e) {
+                        console.error("Gagal parse custom Firebase config:", e);
+                    }
                 }
             }
         }

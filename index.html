@@ -225,6 +225,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
                         <input id="barang-search" oninput="renderBarangList()" type="text" placeholder="Cari SKU atau nama barang..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
                     </div>
+                    <!-- Dropdown Kategori Material Konstruksi Baru -->
                     <select id="barang-filter-kategori" onchange="renderBarangList()" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <option value="Semua">Semua Kategori</option>
                         <option value="Gypsum">Gypsum</option>
@@ -379,6 +380,7 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kategori</label>
+                        <!-- Form Dropdown Kategori Material Konstruksi Baru -->
                         <select id="barang-kategori" class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
                             <option value="Gypsum">Gypsum</option>
                             <option value="Fiber Semen">Fiber Semen</option>
@@ -593,8 +595,7 @@
         let appId = 'stok-masuk-keluar-default';
         
         // =========================================================================
-        // TIPS PENTING: Ganti nilai null di bawah ini dengan objek konfigurasi 
-        // Firebase Anda (dari Fase 3 Langkah 3.5) untuk koneksi otomatis permanen!
+        // KUNCI EMAS: Konfigurasi asli stokify-web-6e6c6 milik Anda dikunci permanen
         // =========================================================================
         let firebaseConfig = {
           apiKey: "AIzaSyAuhRfTwsmxjQjcfV6MD4cTnvH5gZo7N7s",
@@ -653,7 +654,7 @@
 
         const initialMockTransaksi = [
             { id: "demo-t1", barangId: "demo-b1", tipe: "Masuk", qty: 45, pic: "Ferry", noDokumen: "SJ-GYP-112", keterangan: "Stok awal masuk", timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000 },
-            { id: "demo-t2", barangId: "demo-b4", tipe: "Keluar", qty: 2, pic: "Budi", noDokumen: "INV-SAN-01", keterangan: "Pembelian langsung", timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000 },
+            { id: "demo-t2", barangId: "demo-b4", tipe: "Keluar", qty: 2, pic: "Ferry", noDokumen: "INV-SAN-01", keterangan: "Pembelian langsung", timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000 },
             { id: "demo-t3", barangId: "demo-b3", tipe: "Masuk", qty: 50, pic: "Ferry", noDokumen: "SJ-RNG-04", keterangan: "Restok dari distributor", timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000 }
         ];
 

@@ -718,12 +718,12 @@
             document.getElementById('demo-banner').classList.remove('hidden');
         }
 
-        // App States - DEFAULT SEKARANG KE 'user' (VIEWER ONLY) UNTUK KEAMANAN TIM
+        // App States - FORCE DEFAULT PERAN KE 'user' (VIEWER) SETIAP KALI RELOAD/HALAMAN DIBUKA BARU
         let barangList = [];
         let transaksiList = [];
         let activeTab = 'dashboard';
         let transactionChart = null;
-        let currentRole = localStorage.getItem('stokify_current_role') || 'user';
+        let currentRole = 'user'; // <--- DIPAKSA KE USER SETIAP KALI LOAD!
         let previousRole = currentRole; 
 
         // Temporary array store for current multiple image uploads
@@ -970,9 +970,13 @@
 
         // Authenticate User or activate Demo Mode
         async function startAppInit() {
-            // Set initial role choice from saved state - FORCE DEFAULT TO 'user' IF LOADING FOR THE FIRST TIME ON NEW CLIENT
-            document.getElementById('role-selector').value = currentRole;
-            changeAppRole(currentRole);
+            // BERSIHKAN ATAU HAPUS MEMORI ADMIN DI PERANGKAT YANG SUDAH TERLANJUR LOGIN SEBELUMNYA
+            localStorage.removeItem('stokify_current_role'); 
+            
+            // PAKSA SELECTOR & STYLE PERAN KEMBALI KE 'user' (VIEWER) SETIAP KALI HALAMAN BARU DI-LOAD
+            currentRole = 'user';
+            document.getElementById('role-selector').value = 'user';
+            changeAppRole('user');
 
             if (isDemoMode) {
                 initLocalDemoData();

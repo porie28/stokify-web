@@ -673,13 +673,13 @@
         // KUNCI EMAS: Konfigurasi asli stokify-web-6e6c6 MILIK ANDA DIRESTORASI (100% PERSIS SEPERTI SCREENSHOT CONSOLE!)
         // =========================================================================
         let firebaseConfig = {
-  apiKey: "AIzaSyAuhRfTWsmxjQjcfV6MD4cTnvH5gZo7N7s",
-  authDomain: "stokify-web-6e6c6.firebaseapp.com",
-  projectId: "stokify-web-6e6c6",
-  storageBucket: "stokify-web-6e6c6.firebasestorage.app",
-  messagingSenderId: "355697193461",
-  appId: "1:355697193461:web:26044cb29871b22c8e30bc"
-}; 
+          apiKey: "AIzaSyAuhRfTwsmxjQjcfV6MD4cTnvH5gZo7N7s",
+          authDomain: "stokify-web-6e6c6.firebaseapp.com",
+          projectId: "stokify-web-6e6c6", // FIXED: Terkoneksi kembali ke "stokify-web-6e6c6"
+          storageBucket: "stokify-web-6e6c6.firebasestorage.app",
+          messagingSenderId: "355697193461",
+          appId: "1:355697193461:web:26044cb29871b22c8e30bc"
+        }; 
         
         let isDemoMode = false;
 
@@ -1893,6 +1893,7 @@
 
                         showToast("Demo: Transaksi berhasil dibatalkan.");
                         initLocalDemoData();
+                        closeTransactionModal();
                     } else {
                         // Online Firestore
                         try {
